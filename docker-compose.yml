@@ -5,27 +5,15 @@ services:
     image: ghcr.io/dislinkt-devops/dislinkt-gateway-api:latest
     ports:
       - 3000:3000
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     NODE_ENV: development
-  #     DB_HOST: db
-  #     DB_PORT: 3306
-  #     DB_USER: root
-  #     DB_PASSWORD: mauFJcuf5dhRMQrjj
-  #     DB_NAME: dislinkt-users
-  #   links:
-  #     - db
-  # db:
-  #   image: mysql:8.0
-  #   cap_add:
-  #     - SYS_NICE
-  #   restart: always
-  #   environment:
-  #     - MYSQL_DATABASE=dislinkt-users
-  #     - MYSQL_ROOT_PASSWORD=mauFJcuf5dhRMQrjj
-  #   ports:
-  #     - 3306:3306
-  #   volumes:
-  #     - db:/var/lib/mysql
-  #     - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    env_file: 
+      - .env
+    ports: 
+      - 5432:5432
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d/
+volumes:
+  db:
+    driver: local
