@@ -1,10 +1,30 @@
 version: "3.8"
 
 services:
-  dislinkt-gateway:
-    image: ghcr.io/dislinkt-devops/dislinkt-gateway-api:latest
+  nginx:
+    build: ./nginx
     ports:
-      - 3000:3000
+      - 80:80
+    environment:
+     - JWT_SECRET=${JWT_SECRET}
+  dislinkt-auth:
+    image: ghcr.io/dislinkt-devops/dislinkt-user-api:latest
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - DB_TYPE=${DB_TYPE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - HASH_SALT=${HASH_SALT}
+  dislinkt-posts:
+    image: ghcr.io/dislinkt-devops/dislinkt-posts-api:latest
+  dislinkt-chat:
+    image: ghcr.io/dislinkt-devops/dislinkt-chat-api:latest
   db:
     image: postgres:14.1-alpine
     restart: always
