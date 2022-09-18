@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    environment:
+     - JWT_SECRET=${JWT_SECRET}
+  dislinkt-auth:
+    image: ghcr.io/dislinkt-devops/dislinkt-user-api:latest
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - DB_TYPE=${DB_TYPE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - HASH_SALT=${HASH_SALT}
+  dislinkt-posts:
+    image: ghcr.io/dislinkt-devops/dislinkt-posts-api:latest
+  dislinkt-chat:
+    image: ghcr.io/dislinkt-devops/dislinkt-chat-api:latest
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - AUTH_DB_USER=${AUTH_DB_USER}
+      - AUTH_DB_PASS=${AUTH_DB_PASS}
+      - AUTH_DB_NAME=${AUTH_DB_NAME}
+      - POSTS_DB_USER=${POSTS_DB_USER}
+      - POSTS_DB_PASS=${POSTS_DB_PASS}
+      - POSTS_DB_NAME=${POSTS_DB_NAME}
+      - AGENT_DB_USER=${AGENT_DB_USER}
+      - AGENT_DB_PASS=${AGENT_DB_PASS}
+      - AGENT_DB_NAME=${AGENT_DB_NAME}
+    ports: 
+      - 5432:5432
+    volumes:
+      - ./database/init/01-init-psql.sh:/docker-entrypoint-initdb.d/01-init-psql.sh
+  mongodb:
+    image: mongo:5.0
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - CHATS_DB_USER=${CHATS_DB_USER}
+      - CHATS_DB_PASS=${CHATS_DB_PASS}
+      - CHATS_DB_NAME=${CHATS_DB_NAME}
+    volumes:
+      - ./database/init/01-init-mongo.sh:/docker-entrypoint-initdb.d/01-init-mongo.sh
+volumes:
+  db:
+    driver: local
