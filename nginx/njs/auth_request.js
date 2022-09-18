@@ -50,4 +50,13 @@ function authorize(r) {
     r.return(200);
 }
 
-export default {authorize}
+function get_user_id(r) {
+    if ('Authorization' in r.headersIn) {
+        var parsed_token = jwt_payload(r.headersIn.Authorization);
+        return parsed_token.payload.userId;
+    }
+
+    return '';
+}
+
+export default {authorize, get_user_id}
