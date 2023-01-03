@@ -25,6 +25,14 @@ services:
     image: ghcr.io/dislinkt-devops/dislinkt-posts-api:latest
   dislinkt-chat:
     image: ghcr.io/dislinkt-devops/dislinkt-chat-api:latest
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - DB_HOST=${MONGO_DB_HOST}
+      - DB_PORT=${MONGO_DB_PORT}
+      - DB_USER=${CHATS_DB_USER}
+      - DB_PASSWORD=${CHATS_DB_PASS}
+      - DB_NAME=${CHATS_DB_NAME}
   db:
     image: postgres:14.1-alpine
     restart: always

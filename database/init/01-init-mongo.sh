@@ -7,10 +7,10 @@ db.createUser(
   {
     user: "${CHATS_DB_USER}",
     pwd: "${CHATS_DB_PASS}",
-    roles:[{role: "userAdmin" , db:"${CHATS_DB_NAME}"}]})
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
   }
 )
 
 use ${CHATS_DB_NAME}
-db.createCollection("users")
+db.createCollection("${CHATS_DB_NAME}")
 EOF
