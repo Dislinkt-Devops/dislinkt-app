@@ -15,14 +15,25 @@ services:
       - DB_TYPE=${DB_TYPE}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      - DB_USER=${AUTH_DB_USER}
+      - DB_PASSWORD=${AUTH_DB_PASS}
+      - DB_NAME=${AUTH_DB_NAME}
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - JWT_SECRET=${JWT_SECRET}
       - HASH_SALT=${HASH_SALT}
+    depends_on:
+      - db
   dislinkt-posts:
     image: ghcr.io/dislinkt-devops/dislinkt-posts-api:latest
+    environment:
+      - DB_TYPE=${DB_TYPE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${POSTS_DB_USER}
+      - DB_PASSWORD=${POSTS_DB_PASS}
+      - DB_NAME=${POSTS_DB_NAME}
+    depends_on:
+      - db
   dislinkt-chat:
     image: ghcr.io/dislinkt-devops/dislinkt-chat-api:latest
     environment:
