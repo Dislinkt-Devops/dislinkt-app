@@ -21,6 +21,7 @@ services:
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - JWT_SECRET=${JWT_SECRET}
       - HASH_SALT=${HASH_SALT}
+      - API_KEY=${API_KEY}
     depends_on:
       - db
   dislinkt-posts:
@@ -32,6 +33,9 @@ services:
       - DB_USER=${POSTS_DB_USER}
       - DB_PASSWORD=${POSTS_DB_PASS}
       - DB_NAME=${POSTS_DB_NAME}
+      - API_KEY=${API_KEY}
+      - AUTH_HOST=${AUTH_HOST}
+      - AUTH_PORT=${AUTH_PORT}
     depends_on:
       - db
   dislinkt-chat:
@@ -44,6 +48,9 @@ services:
       - DB_USER=${CHATS_DB_USER}
       - DB_PASSWORD=${CHATS_DB_PASS}
       - DB_NAME=${CHATS_DB_NAME}
+      - POSTS_API=${POSTS_API}
+    depends_on:
+      - mongodb
   db:
     image: postgres:14.1-alpine
     restart: always
