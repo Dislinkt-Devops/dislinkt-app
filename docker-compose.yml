@@ -1,5 +1,10 @@
 version: "3.8"
 
+x-logging: &fluent-bit
+  driver: fluentd
+  options:
+    fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
+
 services:
   nginx:
     build: ./nginx
@@ -7,6 +12,10 @@ services:
       - 80:80
     environment:
      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - internal
+      - monitoring
+    logging: *fluent-bit
   dislinkt-auth:
     image: ghcr.io/dislinkt-devops/dislinkt-user-api:latest
     environment:
@@ -22,6 +31,10 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - HASH_SALT=${HASH_SALT}
       - API_KEY=${API_KEY}
+    networks:
+      - internal
+      - monitoring
+    logging: *fluent-bit
     depends_on:
       - db
   dislinkt-posts:
@@ -36,6 +49,10 @@ services:
       - API_KEY=${API_KEY}
       - AUTH_HOST=${AUTH_HOST}
       - AUTH_PORT=${AUTH_PORT}
+    networks:
+      - internal
+      - monitoring
+    logging: *fluent-bit
     depends_on:
       - db
   dislinkt-chat:
@@ -49,6 +66,10 @@ services:
       - DB_PASSWORD=${CHATS_DB_PASS}
       - DB_NAME=${CHATS_DB_NAME}
       - POSTS_API=${POSTS_API}
+    networks:
+      - internal
+      - monitoring
+    logging: *fluent-bit
     depends_on:
       - mongodb
   db:
@@ -66,6 +87,8 @@ services:
       - AGENT_DB_USER=${AGENT_DB_USER}
       - AGENT_DB_PASS=${AGENT_DB_PASS}
       - AGENT_DB_NAME=${AGENT_DB_NAME}
+    networks:
+      - internal
     ports: 
       - 5432:5432
     volumes:
@@ -81,8 +104,17 @@ services:
       - CHATS_DB_USER=${CHATS_DB_USER}
       - CHATS_DB_PASS=${CHATS_DB_PASS}
       - CHATS_DB_NAME=${CHATS_DB_NAME}
+    networks:
+      - internal
     volumes:
       - ./database/init/01-init-mongo.sh:/docker-entrypoint-initdb.d/01-init-mongo.sh
 volumes:
   db:
     driver: local
+
+networks:
+  internal:
+    name: internal
+    driver: bridge
+  monitoring:
+    external: true
