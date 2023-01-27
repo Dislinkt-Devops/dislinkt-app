@@ -50,6 +50,23 @@ services:
     networks:
       - monitoring
 
+  cadvisor:
+    image: google/cadvisor:v0.31.0
+    ports:
+      - "9092:9092"
+    command:
+    - '-port=9092'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
+    networks:
+      - monitoring
+    privileged: true
+
   node-exporter:
     image: prom/node-exporter:v1.1.2
     ports:
